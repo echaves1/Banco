@@ -1,5 +1,5 @@
-Execute the script lab_05_02.sql. This script creates an emp table that is a replica of the employees table. It alters the emp table to add a new column, stars, of VARCHAR2 data type and size 50. Create a PL/SQL block that inserts an asterisk in the stars column for every $1000 of the employee’s salary. Save your script as lab_05_02_soln.sql. 
-Use the DEFINE command to define a variable called empno and initialize it to 176.
-Start the declarative section of the block and pass the value of empno to the PL/SQL block through an iSQL*Plus substitution variable. Declare a variable asterisk of type emp.stars and initialize it to NULL. Create a variable sal of type emp.salary.
+Execute the script lab_05_02.sql. This script creates an emp table that is a replica of the employees table. It alters the emp table to add a new column, stars, of VARCHAR2 data type and size 50. Create a PL/SQL block that inserts an asterisk in the stars column for every $1000 of the employeeâ€™s salary. Save your script as lab_05_02_soln.sql. 
+a. Use the DEFINE command to define a variable called empno and initialize it to 176.
+b. Start the declarative section of the block and pass the value of empno to the PL/SQL block through an iSQL*Plus substitution variable. Declare a variable asterisk of type emp.stars and initialize it to NULL. Create a variable sal of type emp.salary.
 c.	In the executable section write logic to append an asterisk (*) to the string for every $1000 of the salary amount. For example, if the employee earns $8000, the string of asterisks should contain eight asterisks. If the employee earns $12500, the string of asterisks should contain 13 asterisks.
 d.	Update the stars column for the employee with the string of asterisks. Commit before the end of the block.
