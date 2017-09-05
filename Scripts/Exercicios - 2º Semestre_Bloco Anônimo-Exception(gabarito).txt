@@ -1,0 +1,136 @@
+CREATE TABLE MESSAGES
+(TEXT VARCHAR(100))
+/
+
+CREATE TABLE TAB_CD
+(ID_CD  	  NUMBER(7) NOT NULL,
+ NM_CD  	  VARCHAR2(50),
+ NM_ARTISTA VARCHAR2(50),
+ VL_CD      NUMBER(5,2) NOT NULL,
+ TP_CD      NUMBER(1),
+ CATEGORIA  VARCHAR2(20) NOT NULL )
+/
+CREATE TABLE TAB_TP_CD
+(TP_CD    NUMBER(1) NOT NULL,
+ DESCR_TP VARCHAR2(20))
+/
+insert into tab_tp_cd
+values (1,'Simples');
+commit;
+
+CREATE TABLE TAB_ESTOQUE
+(ID_CD   	    NUMBER(7) NOT NULL,
+ QTD_ESTOQUE  NUMBER(4) NOT NULL )
+/
+ 	
+
+--1
+SET VERIFY OFF
+ACCEPT p_sal PROMPT 'Please enter the salary value: '
+DECLARE
+  v_ename employees.last_name%TYPE;
+  v_sal employees.salary%TYPE := &p_sal;
+BEGIN
+  SELECT last_name 
+  INTO   v_ename 
+  FROM   employees
+  WHERE  salary = v_sal;
+  
+  INSERT INTO messages
+  VALUES (v_ename || ' - ' || v_sal );
+EXCEPTION
+WHEN no_data_found THEN
+  INSERT  INTO messages 
+  VALUES ('No employee with a salary of '|| TO_CHAR(v_sal));
+  COMMIT;
+WHEN too_many_rows THEN
+  INSERT INTO messages
+  VALUES ('More than one employee with a salary of ' || TO_CHAR(v_sal));
+  COMMIT;
+WHEN OTHERS THEN
+  INSERT INTO messages
+  VALUES ('Some other error occurred.' );
+  COMMIT;
+END;
+/
+
+select *
+from messages;
+
+
+--2
+accept pid_cd  NUMBER  PROMPT 'ID do CD'
+accept pnm_cd  CHAR    PROMPT 'Nome do CD'
+accept pnm_art CHAR    PROMPT 'Nome do Artista'
+accept pvl_cd  NUMBER  FORMAT '999999.99'  PROMPT 'Valor do CD'
+accept ptp_cd  NUMBER  DEFAULT 1 PROMPT 'Tipo do CD'
+accept pcateg  CHAR    PROMPT 'Categoria do CD'
+
+DECLARE
+  vid_cd   tab_cd.id_cd%type      :=&pid_cd;
+  vnm_cd   tab_cd.nm_cd%type      :='&pnm_cd';
+  vnm_art  tab_cd.nm_artista%type :='&pnm_art';
+  vvl_cd   tab_cd.vl_cd%type      :=&pvl_cd;
+  vtp_cd   tab_cd.tp_cd%type      :=&ptp_cd;
+  vcateg   tab_cd.categoria%type  :='&pcateg';
+  v_valida CHAR(1);
+BEGIN
+  /* SELEÇÃO PARA VEFICAR SE O TIPO DE CD INFORMADO EXISTE. SE NAO EXISTIR
+     SERÁ GERADA UM EXCEÇÃO NOT FOUND. CASO ENCONTRE O FLUXO DE EXECUÇÃO
+     CONTINUA E A PRÓXIMA INSTRUÇÃO SERÁ PROCESSADA, NESSE CASO INSERT */
+  SELECT 'X' 
+  INTO   v_valida
+  FROM   tab_tp_cd
+  WHERE  tp_cd = vtp_cd;
+
+  INSERT INTO tab_cd
+  VALUES(vid_cd, vnm_cd, vnm_art,vvl_cd,vtp_cd, vcateg );
+
+  COMMIT WORK;
+  -- WORK É SÓ PARA ATENDIMENTO DE PADRÃO DE ESCRITA, É OPCIONAL
+EXCEPTION
+
+  WHEN NO_DATA_FOUND THEN
+    RAISE_APPLICATION_ERROR(-20001,'Tipo de Cd não cadastrado');
+
+  WHEN OTHERS THEN
+    RAISE_APPLICATION_ERROR(-20999,'Entre em contato com suporte');
+END;
+/
+
+
+--3
+accept pid_cd  NUMBER  PROMPT 'ID do CD'
+accept pvqtd  NUMBER  PROMPT 'Qtd em Estoque'
+
+DECLARE
+  vid_cd    tab_cd.id_cd%type             :=&pid_cd; 
+  vqtd      tab_estoque.qtd_estoque%type  :=&pvqtd;
+  v_valida  char(1);
+  v_sqlcode number;
+BEGIN
+  SELECT  'X' 
+  INTO    v_valida
+  FROM    tab_estoque
+  WHERE   id_cd = vid_cd;
+
+  UPDATE TAB_ESTOQUE
+  SET qtd_estoque = qtd_estoque + vqtd
+  WHERE id_cd = vid_cd;
+
+  COMMIT WORK;
+
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    INSERT INTO tab_estoque
+    VALUES( vid_cd , vqtd );
+    COMMIT WORK;
+  WHEN OTHERS THEN
+    v_sqlcode := SQLCODE;
+    RAISE_APPLICATION_ERROR(-20999,'Entre em contato com suporte e informe o codigo de erro: '||v_sqlcode);
+END ;
+/
+
+select * 
+from tab_estoque;
+

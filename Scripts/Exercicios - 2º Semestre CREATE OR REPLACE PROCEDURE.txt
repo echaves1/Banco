@@ -1,0 +1,32 @@
+-- Criar Procedure
+CREATE OR REPLACE PROCEDURE format_phone (phone_no IN OUT VARCHAR2) IS 
+
+BEGIN 
+  phone_no := '(' || SUBSTR(phone_no, 1,3) ||
+              ')' || SUBSTR(phone_no, 4,3) ||
+              '-' || SUBSTR(phone_no, 7);
+END format_phone;
+/
+
+-- Invocar procedure
+var phone_no VARCHAR2(15)
+EXECUTE :phone_no := '0000000000' 
+PRINT phone_no
+EXECUTE format_phone (:phone_no)
+PRINT phone_no
+
+
+
+select object_name, object_type, status
+from user_objects
+where object_name='FORMAT_PHONE';
+
+select * from user_errors
+where name = 'FORMAT_PHONE'; --Só funciona se escrever em maiusculo
+
+SELECT TEXT
+FROM USER_SOURCE
+WHERE NAME = 'FORMAT_PHONE';
+
+alter procedure format_phone COMPILE; 
+

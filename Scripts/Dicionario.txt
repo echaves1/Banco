@@ -1,0 +1,19 @@
+
+
+-- Dicionario 
+select object_name, object_type, status
+from user_objects
+
+-- Data Control Lamguage
+
+--Dar acesso
+grant select 
+on x 
+to pf0645;
+--Remover acesso
+revoke select on x from rm77230;
+
+create table x (x int);
+select owner, table_name
+from all_tables
+where table_name='X';

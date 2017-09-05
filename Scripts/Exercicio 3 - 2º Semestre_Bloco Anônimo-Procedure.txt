@@ -1,0 +1,42 @@
+CREATE OR REPLACE PROCEDURE atualiza_estoque(
+  vid_cd IN tab_cd.id_cd%type,
+  vqtd   IN tab_estoque.qtd_estoque%type
+) IS 
+
+  v_valida  char(1);
+  v_sqlcode number;
+  
+BEGIN
+  SELECT  'X' 
+  INTO    v_valida
+  FROM    tab_estoque
+  WHERE   id_cd = vid_cd;
+
+  UPDATE TAB_ESTOQUE
+  SET qtd_estoque = qtd_estoque + vqtd
+  WHERE id_cd = vid_cd;
+
+  COMMIT WORK;
+
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    INSERT INTO tab_estoque
+    VALUES( vid_cd , vqtd );
+    COMMIT WORK;
+  WHEN OTHERS THEN
+    v_sqlcode := SQLCODE;
+    RAISE_APPLICATION_ERROR(-20999,'Entre em contato com suporte e informe o codigo de erro: '||v_sqlcode);
+END atualiza_estoque;
+/
+
+select * 
+from tab_estoque;
+
+--Maneira 1 de invocar
+exec atualiza_estoque(1,1);
+
+--Maneira 2 de invocar
+begin
+  atualiza_estoque(1,1);
+end;
+/
