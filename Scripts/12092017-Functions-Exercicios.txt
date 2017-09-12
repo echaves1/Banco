@@ -1,0 +1,17 @@
+--1.	Crie e invoque a função GET_JOB para retornar um título de trabalho.
+--a.	Crie e compile uma função chamada GET_JOB para retornar um título de trabalho.
+CREATE OR REPLACE FUNCTION rm77230.get_job (jobid IN jobs.job_id%type)
+RETURN jobs.job_title%type IS title jobs.job_title%type;
+BEGIN
+
+    SELECT job_title
+    INTO title
+    FROM jobs
+    WHERE job_id = jobid;
+    RETURN title;
+    
+END rm77230.get_job;
+/
+--b.	Crie uma variável BIND VARCHAR chamada TITLE, permitindo um comprimento de 35 caracteres.
+--Invoque a função com ID do cargo igual a SA_REP para retornar o valor na BIND. 
+--Imprima o valor da BIND para visualizar o resultado.
